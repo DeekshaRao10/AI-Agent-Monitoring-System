@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "201645168726",
+    "project_id": "safeband-a3b89",
+    "storage_bucket": "safeband-a3b89.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:201645168726:android:d57a86880b6e9f1f9d03f7",
+        "android_client_info": {
+          "package_name": "com.example.safeband"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAulmg9z_Bz_8sfevHW3ofLVyDGPoMNRtQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

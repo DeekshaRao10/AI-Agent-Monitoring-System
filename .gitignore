@@ -1,0 +1,14 @@
+.env
+**/.env
+**/serviceAccountKey.json
+**/local.properties
+**/.dart_tool/
+**/build/
+**/.pio/
+**/venv/
+**/.venv/
+**/__pycache__/
+**/.pytest_cache/
+**/ephemeral/
+**/*.jks
+**/*.keystore

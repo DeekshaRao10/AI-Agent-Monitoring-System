@@ -1,0 +1,107 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Internet -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- Bluetooth -->
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+
+    <!-- Android 12+ -->
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+
+    <!-- Required for BLE scanning -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+<uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+
+    <!-- Lets the emergency screen vibrate the phone continuously alongside
+         the siren sound. -->
+    <uses-permission android:name="android.permission.VIBRATE"/>
+
+    <!-- Lets the fall-alert notification draw over the lock screen and
+         turn the screen on WITHOUT the user tapping anything first — the
+         same mechanism alarm/incoming-call apps use. Note: on Android 14+
+         the user must additionally grant "Full screen notifications" for
+         this app once in system Settings; it can't be silently pre-granted. -->
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+
+    <!-- Lets the fall-watch background service keep running once the app's
+         UI is closed — required for flutter_background_service, and the
+         DATA_SYNC type/permission is the correct category for "keeps a
+         connection open, watching for remote data changes" (what this
+         service actually does: an RTDB listener, not audio/location/etc). -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC"/>
+
+    <!-- Lets the app show the system "ignore battery optimizations" prompt
+         (see background_alert_service.dart) — without this exemption,
+         several OEM battery managers (confirmed on Samsung; Vivo has its
+         own separate version of the same problem) kill the background
+         fall-watch service's isolate shortly after the screen locks, so
+         it never sees a fall happen at all. -->
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
+
+    <application
+        android:label="safeband"
+        android:name="${applicationName}"
+        android:icon="@mipmap/ic_launcher">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:taskAffinity=""
+            android:theme="@style/LaunchTheme"
+            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
+            android:hardwareAccelerated="true"
+            android:showWhenLocked="true"
+            android:turnScreenOn="true"
+            android:windowSoftInputMode="adjustResize">
+
+            <meta-data
+                android:name="io.flutter.embedding.android.NormalTheme"
+                android:resource="@style/NormalTheme" />
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+        </activity>
+
+        <meta-data
+            android:name="flutterEmbedding"
+            android:value="2" />
+
+        <!-- The plugin's own AndroidManifest.xml declares this service
+             with no foregroundServiceType, but Android requires the type
+             requested at runtime (dataSync, in background_alert_service.dart)
+             to already be listed here statically — otherwise it crashes
+             with "foregroundServiceType is not a subset of ... attribute
+             in service element". exported must match the plugin's own
+             declaration (true) or the manifest merge itself fails. -->
+        <service
+            android:name="id.flutter.flutter_background_service.BackgroundService"
+            android:foregroundServiceType="dataSync"
+            android:exported="true"
+            tools:node="merge"/>
+
+    </application>
+
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.PROCESS_TEXT" />
+            <data android:mimeType="text/plain" />
+        </intent>
+    </queries>
+
+</manifest>
