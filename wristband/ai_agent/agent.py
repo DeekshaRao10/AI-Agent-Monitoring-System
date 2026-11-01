@@ -34,6 +34,8 @@ def run_agent():
     # AGENT 1: ACTIVITY MONITOR
     # --------------------------------
 
+    print("\n[AGENT 1] Starting Activity Monitor...")
+
     activity_agent = ActivityMonitorAgent(band_id)
 
     activity_report = activity_agent.monitor_activity()
@@ -41,6 +43,8 @@ def run_agent():
     # --------------------------------
     # AGENT 2: SAFETY INTELLIGENCE
     # --------------------------------
+
+    print("\n[AGENT 2] Starting Safety Intelligence...")
 
     safety_agent = SafetyIntelligenceAgent()
 
@@ -52,6 +56,8 @@ def run_agent():
     # AGENT 3: CAREGIVER RESPONSE
     # --------------------------------
 
+    print("\n[AGENT 3] Starting Caregiver Response...")
+
     caregiver_agent = CaregiverResponseAgent(band_id)
 
     caregiver_result = caregiver_agent.respond_to_safety_alert(
@@ -59,7 +65,7 @@ def run_agent():
     )
 
     # --------------------------------
-    # SAVE FINAL AI INSIGHTS
+    # PREPARE FINAL FIREBASE DATA
     # --------------------------------
 
     routine_insights = (
@@ -67,10 +73,35 @@ def run_agent():
     )
 
     final_result = {
+
+        # Activity information
         **routine_insights,
 
         "bandId": band_id,
 
+        "latestSteps": activity_report.get(
+            "latestSteps",
+            routine_insights.get("latestSteps", 0)
+        ),
+
+        "averageActivity": activity_report.get(
+            "averageActivity",
+            routine_insights.get("averageActivity", 0)
+        ),
+
+        "daysRecorded": routine_insights.get(
+            "daysRecorded", 0
+        ),
+
+        "totalActivity": activity_report.get(
+            "totalActivity", 0
+        ),
+
+        "totalRecords": activity_report.get(
+            "totalRecords", 0
+        ),
+
+        # Safety decision
         "status": safety_decision.get("status"),
 
         "message": safety_decision.get("message"),
@@ -87,22 +118,23 @@ def run_agent():
             "anomalyDetection", {}
         ),
 
-        "latestSteps": activity_report.get("latestSteps", 0),
-
-        "averageActivity": activity_report.get(
-            "averageActivity", 0
-        ),
-
-        "totalRecords": activity_report.get("totalRecords", 0),
-
+        # Caregiver response
         "caregiverResponse": caregiver_result
     }
+
+    # --------------------------------
+    # SAVE TO FIREBASE
+    # --------------------------------
+
+    print("\n[FINAL] Saving AI insights to Firebase...")
 
     save_ai_insights(band_id, final_result)
 
     print("\n========================================")
     print("       MULTI-AGENT EXECUTION COMPLETE")
     print("========================================")
+
+    print("\nFINAL FIREBASE DATA:")
 
     print(json.dumps(final_result, indent=4))
 
